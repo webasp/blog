@@ -1,0 +1,140 @@
+{@include "home/header"}
+<link rel="stylesheet" href="{@$url}/static/css/motion.css">
+<article class="main-content common-page clearfix">
+
+    {if $YearAll}
+    <div class="post-tags" style="margin-bottom: 30px;border-bottom: none; text-align: center;" >
+        {foreach $YearAll(key,value)}
+        <a href="/okr/{@@value}"> {@@value} </a>
+        {/foreach}
+    </div>
+    {else}
+    {/if}
+
+        {if $okr}
+        <div class="post-tags" style="margin-bottom: 30px;border-bottom: none;" >
+            {foreach $okr(key,value)}
+            <h2 style="text-align: center;"> {#Year} 年的目标及第{@@key}季度目标完成情况  </h2>
+            <div class="okr-table clearfix" style="width: 900px;">
+                <div class="okr-table-th">
+                    <div class="okr-table-th-td"> 目标 </div>
+                    <div class="okr-table-th-td"> 关键结果 </div>
+                    <div class="okr-table-th-td">
+                        <p>正常进度</p>
+                        <span>得分</span>
+                        <span>备注</span>
+                    </div>
+                    <div class="okr-table-th-td">
+                        <p>落后于计划或改过的内容</p>
+                        <span>得分</span>
+                        <span>备注</span>
+                    </div>
+                    <div class="okr-table-th-td">
+                        <p>已经完成</p>
+                        <span>得分</span>
+                        <span>备注</span>
+                    </div>
+                </div>
+                <?php if ($value) {?>
+                <?php foreach ($value as $key=>$values) { ?>
+                <div class="okr-table-tr clearfix">
+                    <div class="okr-table-td okr-title">
+                        <h4 style="margin-bottom: 5px;"> <?php echo date('m月d',$values['start_at']);?> 至 <?php echo date('m月d',$values['end_at']);?> </h4>
+                        <?php echo $values['title'];?>
+                    </div>
+                    <div class="okr-table-td okr-item-box">
+                        <?php if ($values['item']) {?>
+                        <?php foreach ($values['item'] as $key=>$values2) { ?>
+                        <div class="okr-item clearfix">
+                            <div class="okr-item-sub clearfix">
+                                <p> <?php echo $values2['content'];?> </p>
+                            </div>
+                            <div class="okr-item-sub clearfix">
+                                <span><p> <?php echo $values2['normal_score'];?> </p></span>
+                                <span><p><?php echo $values2['normal_details'];?></p></span>
+                            </div>
+                            <div class="okr-item-sub clearfix">
+                                <span><p><?php echo $values2['backward_score'];?></p></span>
+                                <span><p><?php echo $values2['backward_details'];?></p></span>
+                            </div>
+                            <div class="okr-item-sub clearfix">
+                                <span><p><?php echo $values2['complete_score'];?></p></span>
+                                <span><p><?php echo $values2['complete_details'];?></p></span>
+                            </div>
+                        </div>
+                        <?php } ?>
+                        <?php } ?>
+                    </div>
+                </div>
+                <?php } ?>
+                <?php } ?>
+            </div>
+            {/foreach}
+        </div>
+        {/if}
+
+        {if $YearOkr}
+        <div class="post-tags" style="margin-bottom: 30px;border-bottom: none;" >
+            <h2 style="text-align: center;"> {#Year} 年度目标完成情况  </h2>
+            <div class="okr-table clearfix" style="width: 900px;">
+                <div class="okr-table-th">
+                    <div class="okr-table-th-td"> 目标 </div>
+                    <div class="okr-table-th-td"> 关键结果 </div>
+                    <div class="okr-table-th-td">
+                        <p>正常进度</p>
+                        <span>得分</span>
+                        <span>备注</span>
+                    </div>
+                    <div class="okr-table-th-td">
+                        <p>落后于计划或改过的内容</p>
+                        <span>得分</span>
+                        <span>备注</span>
+                    </div>
+                    <div class="okr-table-th-td">
+                        <p>已经完成</p>
+                        <span>得分</span>
+                        <span>备注</span>
+                    </div>
+                </div>
+                <?php foreach ($this->assign['YearOkr'] as $key=>$values) { ?>
+                <div class="okr-table-tr clearfix">
+                    <div class="okr-table-td okr-title">
+                        <?php echo $values['title'];?>
+                    </div>
+                    <div class="okr-table-td okr-item-box">
+                        <?php if ($values['item']) {?>
+                        <?php foreach ($values['item'] as $key=>$values2) { ?>
+                        <div class="okr-item clearfix">
+                            <div class="okr-item-sub clearfix">
+                                <p> <?php echo $values2['content'];?> </p>
+                            </div>
+                            <div class="okr-item-sub clearfix">
+                                <span><p> <?php echo $values2['normal_score'];?> </p></span>
+                                <span><p><?php echo $values2['normal_details'];?></p></span>
+                            </div>
+                            <div class="okr-item-sub clearfix">
+                                <span><p><?php echo $values2['backward_score'];?></p></span>
+                                <span><p><?php echo $values2['backward_details'];?></p></span>
+                            </div>
+                            <div class="okr-item-sub clearfix">
+                                <span><p><?php echo $values2['complete_score'];?></p></span>
+                                <span><p><?php echo $values2['complete_details'];?></p></span>
+                            </div>
+                        </div>
+                        <?php } ?>
+                        <?php } ?>
+                    </div>
+                </div>
+                <?php } ?>
+            </div>
+        </div>
+        {/if}
+
+        <?php if(!$this->assign['YearOkr'] && !$this->assign['okr']){?>
+        <p style="text-align: center; line-height: 400px;">还没有做任务</p>
+        {/if}
+
+
+</article>
+
+{@include "home/footer"}

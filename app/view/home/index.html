@@ -1,0 +1,38 @@
+{@include "home/header"}
+<div class="main-content index-page clearfix">
+    <div class="post-lists">
+        <div class="post-lists-body">
+            {if $article}
+            {foreach $article(key,value)}
+            <div class="post-list-item">
+                <div class="post-list-item-container">
+                    <div class="item-thumb bg-deepgrey" style="background-image:url('{@$qiniu_url}{@value.thumb}');"></div>
+                    <a href="/article/{@value.id}">
+                        <div class="item-desc">
+                            <p>{@value.description}</p>
+                        </div>
+                    </a>
+                    <div class="item-slant reverse-slant bg-deepgrey"></div>
+                    <div class="item-slant"></div>
+                    <div class="item-label">
+                        <div class="item-title"><a href="/article/{@value.id}">{@value.title}</a></div>
+                        <div class="item-meta clearfix">
+                            <i class="item-meta-ico iconfont {@value.icon}"></i>
+                            <div class="item-meta-cat">
+                                <a href="cat/{@value.cat}">{@value.name}</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {/foreach}
+            {else}
+               <div class='empty'> Empty </div>
+            {/if}
+        </div>
+    </div>
+    <div class="lists-navigator clearfix">
+        {#page}
+    </div>
+</div>
+{@include "home/footer"}

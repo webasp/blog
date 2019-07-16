@@ -1,0 +1,83 @@
+{@include "admin/header"}
+<div class="container-fluid">
+    <!-- Page Heading -->
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header">
+                <i class="fa fa-fw fa-camera"></i> 摄影作品 <small>  </small>
+                <a href="photo/add" class="btn btn-primary btn-sm pull-right"> <i class="fa fa-fw fa-paper-plane"></i> 添加 </a>
+            </h3>
+        </div>
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th width="50"> ID </th>
+                        <th> 标题 </th>
+                        <th width="100"> 类别 </th>
+                        <th width="200"> 创建时间 </th>
+                        <th width="100"> 浏览数 </th>
+                        <th width="100"> 评论数 </th>
+                        <th width="50" align="right"> 显示 </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {if $photo}
+                    {foreach $photo(key,value)}
+                    <tr>
+                        <td>{@value.id}</td>
+                        <td><a href="photo/{@value.id}/edit"> {@value.title} </a></td>
+                        <td>{@value.cat_title}</td>
+                        <td>{@value.create_time}</td>
+                        <td>{@value.view}</td>
+                        <td>{@value.review}</td>
+                        <td>
+                            <button type="button" id="status-{@value.id}" data-id="{@value.id}" data-toggle="status" class="btn btn-xs <?php echo $value['status']?'btn-primary':'btn-default';?>"> <?php echo $value['status']?'显示':'隐藏';?> </button>
+                        </td>
+                    </tr>
+                    {/foreach}
+                    {else}
+                       <tr><td colspan="7"><p class="empty"></p></td> </tr>
+                    {/if}
+
+                    </tbody>
+                </table>
+        </div>
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="lists-navigator clearfix">
+                {#page}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $("button[data-toggle=status]").click(function () {
+            var id = $(this).data('id');
+            $.ajax({
+                type: 'get',
+                url: '/admin/photo/'+id+'/status',
+                success: function(data){
+                    if(data.status){
+                        $('#status-'+data.id).text(data.info);
+                        $('#status-'+data.id).removeClass('btn-default').addClass('btn-primary');
+                    }else{
+                        $('#status-'+data.id).text(data.info);
+                        $('#status-'+data.id).removeClass('btn-primary').addClass('btn-default');
+
+                    }
+                }
+            });
+            return false;
+        });
+    })
+</script>
+
+{@include "admin/footer"}

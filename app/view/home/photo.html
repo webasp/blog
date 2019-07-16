@@ -1,0 +1,42 @@
+{@include "home/header"}
+    <article class="main-content common-page clearfix">
+        <div id="post-content" class="photo-page">
+            <div class="photo-type-group post-content">
+
+                <div class="post-tags" style="padding:20px 10px;">
+                    <a href="/photo"> 全部 </a>
+                    {foreach $cat(key,value)}
+                        <a href="/photo/cat/{@value.id}"> {@value.title} </a>
+                    {/foreach}
+                </div>
+            </div>
+
+            <div class="photo-list clearfix">
+
+                {if $data}
+                    {foreach $data(key,value)}
+                        <div class="photo-itme">
+                        <div class="img">
+                            <a href="/photo/{@value.id}" target="view_window"><img src="{@$qiniu_url}{@value.thumb}" alt="{@value.title}"></a>
+                        </div>
+                        <div class="title-ber">
+                        <span class="tag f-fl">
+                            <span class="tags"># <a href="/photo/cat/{@value.cat_id}">{@value.cat_title}</a> </span>
+                            <span class="p"> <a href="/photo/{@value.id}">{@value.pin}P</a> </span>
+                            <h4><a href="/photo/{@value.id}" target="view_window"> {@value.title} </a></h4>
+                        </span>
+                            <span class="time f-fr"> {@value.create_time} </span>
+                        </div>
+                    </div>
+                    {/foreach}
+                {else}
+                   <div class="empty"> Empty Photo </div>
+                {/if}
+            </div>
+            <div class="lists-navigator clearfix">
+                {#page}
+            </div>
+        </div>
+
+    </article>
+{@include "home/footer"}

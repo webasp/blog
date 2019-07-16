@@ -1,0 +1,30 @@
+<form name="okr-update" method="post">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title"> 修改计划 </h4>
+    </div>
+    <div class="modal-body">
+        <div class="form-group">
+            <input type="hidden" name="id" value="{$data.id}">
+            <input type="text" class="form-control" value="{$data.title}" name="title" placeholder="任务标题">
+        </div>
+        <div class="form-group">
+            <select class="form-control" name="type">
+                <option value="1" <?php if($this->assign['data']['type'] == 1) echo 'selected="selected"'; ?>>近期目标</option>
+                <option value="2" <?php if($this->assign['data']['type'] == 2) echo 'selected="selected"'; ?>>今年目标</option>
+                <option value="3" <?php if($this->assign['data']['type'] == 3) echo 'selected="selected"'; ?>>长期目标</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <input type="date" value="{$data.start_at}" class="form-control start_at" name="start_at">
+        </div>
+        <div class="form-group">
+            <input type="date" value="{$data.end_at}" class="form-control end_at" name="end_at">
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger pull-left" data-toggle="okr-del" data-id="{$data.id}" > <i class="fa fa fa-trash-o fa-fw"></i> 删除</button>
+        <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">关闭</button>
+        <button type="submit" class="btn btn-primary"> 保存 </button>
+    </div>
+</form>

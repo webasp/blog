@@ -1,0 +1,14 @@
+<ul class="list-group okr-task clearfix">
+    {if $okr}
+    {foreach $okr(key,value)}
+    <li class="list-group-item">
+        <span data-toggle="okr" data-id="{@value.id}" class="badge">{@value.count}</span>
+        {@value.title}
+        <span class="edit-okr" data-toggle="edit-okr" data-id="{@value.id}"><i class="fa fa-pencil fa-fw"></i></span>
+    </li>
+    {/foreach}
+    {else}
+    <p class=""> 还没有计划.. </p>
+    {/if}
+</ul>
+

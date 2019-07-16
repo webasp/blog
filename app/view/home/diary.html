@@ -1,0 +1,49 @@
+{@include "home/header"}
+<article class="main-content page-page clearfix">
+    <div class="diary-box clearfix">
+        {if $diary}
+            {foreach $diary(key,value)}
+                <dl class="diary-item clearfix">
+                    <dt class="date-time"> <?php echo date('m月d日',$value['create_at']);?>  <span> <?php echo date('H:i',$value['create_at']);?> </span>
+                    <span style="float: right;">
+                        <?php
+                           switch ($value['type']){
+                                case 1:
+                                    echo '日记';
+                                    break;
+                                case 2:
+                                     echo '周记';
+                                    break;
+                                case 3:
+                                     echo '月度';
+                                    break;
+                                case 4:
+                                     echo '季度';
+                                    break;
+                                case 5:
+                                     echo '年度';
+                                    break;
+                                }
+                        ?>
+                    </span>
+                    </dt>
+                    <dd> <?php echo  str_replace(array("\r\n", "\r", "\n"), "", $value['content']);?> </dd>
+                    <?php if($value['image']){ ?>
+                    <dd class="diary-img clearfix">
+                      <?php $img = diaryImg($value['image']);?>
+                      <?php foreach($img as $val){ ?>
+                          <?php echo '<img height="100" src="'.$this->assign['url'].$val.'">' ?>
+                      <?php } ?>
+                    </dd>
+                    <?php } ?>
+                </dl>
+            {/foreach}
+        {else}
+        <div class='empty'> Empty.. </div>
+        {/if}
+    </div>
+    <div class="lists-navigator clearfix">
+        {#page}
+    </div>
+</article>
+{@include "home/footer"}

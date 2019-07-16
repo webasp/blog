@@ -1,0 +1,98 @@
+{@include "admin/header"}
+<script src="{@$url}/static/admin/editor/configeditor.js"></script>
+<script src="{@$url}/static/js/Update.js"></script>
+<input type="hidden" id="token" name="token" value="{#token}">
+
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header"> <i class="fa fa-fw fa-edit"></i> 添加文章</h3>
+        </div>
+    </div>
+
+    <form id="from-article-add" method="post">
+        <div class="row">
+            <div class="col-lg-5">
+                <div class="form-group">
+                    <input class="form-control" name="title" placeholder="文章标题" required="required">
+                </div>
+                <div class="form-group">
+                    <select name="cat" class="form-control">
+                        {foreach $cat(key,value)}
+                        <option value="{@value.id}">{@value.name}</option>
+                        {/foreach}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <textarea class="form-control" name="description" rows="3" placeholder="简要描述" required="required"></textarea>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="tags">
+                    {foreach $tags(key,value)}
+                    <span class="label btn btn-default"> <i class="fa fa-tags"></i> {@value.name} </span>
+                    <input name="tags[]" type="checkbox" value="{@value.id}" />
+                    {/foreach}
+
+                </div>
+            </div>
+            <div class="col-lg-2">
+                <div class="updateThumb pull-right">
+                    <img   class="img-rounded" src="http://temp.im/150x170/a0a0a0/fff">
+                    <input type="file" id="thumb-file" name="thumb-file">
+                    <input type="hidden" id="thumb" name="thumb">
+                </div>
+            </div>
+        </div>
+        <div class="form-content">
+            <div id="content"></div>
+        </div>
+    </form>
+
+</div>
+<script>
+
+    $(function () {
+        $('#thumb').Update();
+        $('.tags .label').click(function (e) {
+            if($(this).next().prop("checked")) {
+                $(this).next().prop("checked", false);
+                $(this).removeClass('btn-primary');
+                $(this).addClass('btn-default');
+            }else{
+                $(this).next().prop("checked", true);
+                $(this).removeClass('btn-default');
+                $(this).addClass('btn-primary');
+            }
+        });
+    });
+
+    function save(){
+        $.ajax({
+            url:'save',
+            type: "POST",
+            data:$("#from-article-add").serialize(),
+            success: function(result) {
+                if(result.status === 1){
+                    toastr.success(result.info);
+                    setTimeout(function (e) {
+                        window.location.href = '/admin/article/'+result.id+'/edit';
+                    },1000);
+                }
+
+                if(result.status === 0){
+                    toastr.error(result.info);
+                }
+            },
+            error: function(request) {
+                alert("Connection error");
+            }
+        });
+    }
+</script>
+
+
+
+{@include "admin/footer"}

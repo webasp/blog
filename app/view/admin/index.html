@@ -1,0 +1,306 @@
+{@include "admin/header"}
+<link rel="stylesheet" href="{@$url}/static/admin/css/morris.css">
+<script src="{@$url}/static/admin/js/Update.js"></script>
+<script src="{@$url}/static/admin/js/raphael-min.js"></script>
+<script src="{@$url}/static/admin/js/morris.min.js"></script>
+<div class="container-fluid">
+    <!-- Page Heading -->
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header">
+                <i class="fa fa-fw fa-calendar"></i> <?php echo $this->assign['year'];?> 好习惯养成表
+            </h3>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="table-responsive">
+             <table class="table table-bordered">
+                 <tr>
+                     <th width="80" align="center"> 周期 </th>
+                     <th width="200"> 好习惯 </th>
+                     <th width="76"> 星期一 </th>
+                     <th width="76"> 星期二 </th>
+                     <th width="76"> 星期三 </th>
+                     <th width="76"> 星期四 </th>
+                     <th width="76"> 星期五 </th>
+                     <th width="76"> 星期六 </th>
+                     <th width="76"> 星期天 </th>
+                     <th width="80"> 操作 </th>
+                 </tr>
+                 <?php
+                 if($this->assign['year'] === '2019'){
+                   $week = $this->assign['sweek'];
+                 }else{
+                   $week = 1;
+                 }
+
+
+                 for($week;$week<=$this->assign['weeks'];$week++){
+                 ?>
+                 <tr <?php echo $this->assign['week'] == $week ? 'class="info"':''; ?>>
+                     <td> 第 <?php echo $week;?> 周 </td>
+                     <td colspan="9" style="padding: 0">
+                         <table class="table table-sub">
+                             <?php
+                             $HabitsLinks = $this->assign['HabitsLinks'];
+                             $HabitsLink = isset($HabitsLinks[$week]) ? $HabitsLinks[$week]:[];
+                             foreach($HabitsLink as $value){
+                             ?>
+                             <tr>
+                                 <td width="200" height="30" style="text-align: left; padding-left: 5px; border-left: none;" title="<?php echo $value['text'];?>">
+                                     <?php echo $value['title'];?>
+                                 </td>
+
+                                 <?php
+
+                                 for($i =1;$i<=7;$i++){
+                                 if(isset($value['day'][$i])){
+                                 ?>
+                                 <td width="76"><span class="glyphicon glyphicon-ban-circle good-habits-annal1" title="<?php echo $value['day'][$i];?>"></span></td>
+                                 <?php
+                                 }else{
+                                  ?>
+
+                                 <td width="76">
+                                     <?php if($value['status'] == 0){ ?>
+                                     <span data-id="<?php echo $value['id'];?>" data-toggle="modal" data-target=".habits-annal" data-day="<?php echo $i;?>" class="good-habits-annal"></span>
+                                     <?php } ?>
+                                 </td>
+
+                                 <?php
+                                 }
+
+                                 ?>
+
+                                     <?php } ?>
+
+
+                                 <td width="80">
+                                     <?php if($value['status'] == 0){ ?>
+                                     <a href="javascript:void(0);" data-toggle="good-habits-del" data-id="<?php echo $value['id'];?>">删除</a>
+                                     <a href="javascript:void(0);" data-toggle="habits-complete" data-id="<?php echo $value['id'];?>">完成</a>
+                                     <?php } ?>
+                                 </td>
+                             </tr>
+
+                            <?php } ?>
+
+                         </table>
+                         <p style="line-height: 22px; height: 22px; padding: 5px;" class="good-habits-ber">
+                             <span class="pull-left btn btn-xs" data-week="<?php echo $week;?>" data-toggle="modal" data-target=".add-habits"><i class="fa fa-plus"></i></span>
+                         </p>
+                     </td>
+                 </tr>
+                 <?php
+
+                  }
+                 ?>
+             </table>
+
+            </div>
+
+        </div>
+        <div class="col-lg-4">
+            <div class="panel panel-default panel-task">
+                <div class="panel-heading">
+                    <h3 class="panel-title text-center">
+                                <span class="pull-left">
+                                    <i class="fa fa-tasks fa-fw"></i> 习惯列表
+                                </span>
+                        <div class="btn-group btn-group-xs" id="okr-type" role="group">
+                            <button type="button" data-type="1" class="btn btn-primary">真正进行</button>
+                            <button type="button" data-type="3" class="btn btn-default">已经完成</button>
+                        </div>
+                        <span class="pull-right btn btn-xs" data-toggle="modal" data-target=".add-GoodHabits"><i class="fa fa-plus"></i></span></h3>
+                </div>
+                <div id="goodHabits-list">
+                    <ul class="list-group okr-task clearfix">
+                        <?php foreach($this->assign['Habits'] as $hs){ ?>
+                        <li class="list-group-item "><?php echo $hs['title'];?>
+                            <span class="btn btn-xs pull-right"
+                                  data-toggle="modal"
+                                  data-target=".good_habits_edit"
+                                  data-id="<?php echo $hs['id'];?>"
+                                  data-title="<?php echo $hs['title'];?>"
+                                  data-status="<?php echo $hs['status'];?>"
+                                  data-description="<?php echo $hs['description'];?>"
+                            >修改</span>
+                            <span class="btn btn-xs pull-right" data-target="good_habits_del" data-id="<?php echo $hs['id'];?>"> 删除 </span>
+                        </li>
+                        <?php } ?>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 设置 -->
+<div class="modal fade habits add-habits" id="add-habits" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title"> 添加坏习惯 </h4>
+            </div>
+            <form name="add-habits" method="post">
+                <div class="modal-body">
+                    <input type="hidden" name="year" value="<?php echo $this->assign['year'];?>">
+                    <input type="hidden" name="week" value="">
+                    <div class="form-group">
+                        <select class="form-control" name="good_habits_id">
+                            <?php foreach($this->assign['Habits'] as $hv){ ?>
+                            <option value="<?php echo $hv['id'];?>"><?php echo $hv['title'];?></option>
+                            <?php } ?>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <textarea class="form-control" name="description" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-sm btn-block btn-primary"> 保存 </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 记录 -->
+<div class="modal fade habits habits-annal" id="habits-annal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title"> 说下没有坚持下了的理由吧！ </h4>
+            </div>
+            <form name="habits-annal" method="post">
+                <div class="modal-body">
+                    <input type="hidden" name="good_habits_links_id" value="">
+                    <input type="hidden" name="day" value="">
+                    <div class="form-group">
+                        <textarea class="form-control" name="correction" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-block btn-sm btn-primary"> 提交 </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 添加 -->
+<div class="modal fade habits add-GoodHabits" id="add-GoodHabits" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title"> 添加习惯 </h4>
+            </div>
+            <form name="add-GoodHabits" method="post">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="title">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <textarea class="form-control" name="description" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-sm btn-block btn-primary"> 保存 </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 修改 -->
+<div class="modal fade habits good_habits_edit" id="good_habits_edit" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title"> 修改喜欢 </h4>
+            </div>
+            <form name="good_habits_edit" method="post">
+
+                <div class="modal-body">
+                    <input type="hidden" name="id" value="">
+                    <div class="form-group">
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="title">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <textarea class="form-control" name="description" rows="2"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" name="status">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-block btn-sm btn-primary"> 提交 </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<script type="text/javascript" src="{@$url}/static/admin/js/habits.js" charset="UTF-8"></script>
+<style>
+    .table.table-sub{
+        overflow: hidden;
+        margin-bottom: 0;
+        border-bottom: 1px solid #ccc;
+        margin-top: -1px;
+        background: none;
+    }
+
+    .table.table-sub tr td{
+        border: 1px solid #f1f1f1 !important;
+    }
+    .good-habits-annal1{
+        font-size: 18px;
+        color: #ff0008;
+        display: block;
+        width: 100%;
+        height: 37px;
+        line-height: 37px;
+    }
+    .good-habits-annal{
+        font-size: 18px;
+        color: #ff0008;
+        display: block;
+        width: 100%;
+        height: 37px;
+        line-height: 37px;
+        cursor: pointer;
+    }
+    .good-habits-annal:hover{background: #eeeeee; }
+    .table.table-sub>tbody>tr>td{
+        padding: 0;
+        vertical-align: inherit;
+        text-align: center;
+        border-left: 1px solid #ccc;
+        border-top: none;
+        border-bottom: 1px solid #ddd;
+        height: 37px;
+        line-height: 37px;
+    }
+    .table.table-sub>tbody>tr>td>a{
+        text-decoration: none;
+        font-size: 12px;
+    }
+    .table.table-sub>tbody>tr:hover{
+        background:#f5f5f5;
+    }
+</style>
+
+{@include "admin/footer"}

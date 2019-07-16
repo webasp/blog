@@ -1,0 +1,206 @@
+{@include "admin/header"}
+
+<script src="{@$url}/static/admin/js/Update.js"></script>
+<script src="{@$url}/static/admin/js/Update2.js"></script>
+<input type="hidden" id="token" name="token" value="{#token}">
+
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header"> <i class="fa fa-fw fa-paper-plane"></i> 修改摄影
+                <a href="/admin/photo" class="btn btn-primary pull-right"> <i class="fa fa-fw fa-angle-double-left"></i> 返回 </a>
+            </h3>
+        </div>
+    </div>
+
+    <form id="form-photo-update" name="form-photo-update" method="post">
+        <div class="row">
+            <div class="col-lg-5">
+
+                <div class="form-group">
+                    <input type="hidden" name="id" value="{$data.id}">
+                    <input class="form-control" name="title" placeholder="标题" value="{$data.title}" required="required">
+                </div>
+
+                <div class="form-group">
+                    <select name="cat" class="form-control">
+                        {foreach $cat(key,value)}
+                        <option value="{@value.id}">{@value.title}</option>
+                        {/foreach}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <textarea class="form-control" name="description" rows="3" placeholder="简要描述" required="required">{$data.description}</textarea>
+                </div>
+
+                <div class="form-group">
+                    <button class="btn btn-primary btn-block" type="submit"> 保存 </button>
+                </div>
+
+            </div>
+            <div class="col-lg-2">
+                <div class="updateThumb pull-right">
+                    <img   class="img-rounded" src="{@$qiniu_url}{$data.thumb}">
+                    <input type="file" id="thumb-file" name="thumb-file">
+                    <input type="hidden" id="thumb" name="thumb" value="{$data.thumb}">
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header"> <i class="fa fa-fw fa-picture-o"></i> 摄影照片
+                <span  data-toggle="modal" data-target="#photo-update" class="btn btn-primary pull-right"> <i class="fa fa-upload btn-xs" aria-hidden="true"></i> 添加 </span>
+            </h3>
+        </div>
+    </div>
+
+    <div class="row">
+
+        {if $photo}
+        {foreach $photo(key,value)}
+        <div class="col-sm-4 col-md-3">
+            <div class="thumbnail">
+                <img src="{@$qiniu_url}{@value.images}" alt="{@value.title}" style="height: 250px;">
+
+                <div class="caption">
+                    <p> {@value.title} </p>
+                    <p class="photo-operating-ber">
+                        <span class="pull-left">
+                            <i class="fa fa-heart-o" aria-hidden="true"></i> {@value.like}
+                            <i class="fa fa-comments-o" aria-hidden="true"></i> {@value.review}
+                        </span>
+                        <span class="pull-right">
+                                <button type="button" data-toggle="photo-delete" data-id="{@value.id}" class="btn btn-warning btn-sm">删除</button>
+                        </span>
+                    </p>
+                </div>
+            </div>
+        </div>
+        {/foreach}
+        {else}
+        <p class="empty"> 还没有照片 </p>
+        {/if}
+
+
+
+    </div>
+
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="photo-update" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel"> 上传摄影作品 </h4>
+            </div>
+            <form id="form-item-post" name="form-item-post" method="post">
+                <div class="modal-body">
+                    <p class="photoUpdate">
+                        <img   class="img-rounded" src="http://temp.im/268x170/a0a0a0/fff">
+                        <input type="file" id="photo-file" name="thumb-file">
+                        <input type="hidden" id="photo" name="photo">
+                    </p>
+                    <p><input type="text" name="title" class="form-control"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal"> 取消 </button>
+                    <button type="submit" class="btn btn-primary"> 保存 </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    $("#cat").find("option[value='{$data.cat_id}']").attr("selected",true);
+    $(function () {$('#thumb').Update();});
+
+    $("form[name=form-photo-update]").submit(function () {
+        $.ajax({
+            url:'update',
+            type: "POST",
+            data:$("#form-photo-update").serialize(),
+            success: function(result) {
+                if(result.status === 1){
+                    toastr.success(result.info);
+                    setTimeout(function (e) {
+                        window.location.href = '/admin/photo/'+result.id+'/edit';
+                    },1000);
+                }
+
+                if(result.status === 0){
+                    toastr.error(result.info);
+                }
+            },
+            error: function(request) {
+                toastr.error('Connection error');
+            }
+        });
+        return false;
+    });
+
+    $("form[name=form-item-post]").submit(function () {
+        $.ajax({
+            url:'save',
+            type: "POST",
+            data:$("#form-item-post").serialize(),
+            success: function(result) {
+                if(result.status === 1){
+                    toastr.success(result.info);
+                    setTimeout(function (e) {
+                        window.location.href=window.location.href;
+                    },1000);
+                }
+
+                if(result.status === 0){
+                    toastr.error(result.info);
+                }
+            },
+            error: function(request) {
+                toastr.error('Connection error');
+            }
+        });
+        return false;
+    });
+
+
+    $("button[data-toggle=photo-delete]").click(function () {
+
+        if (!confirm("你真的确定要删除吗?")){
+            return false;
+        }
+
+
+        var id = $(this).data('id');
+        $.ajax({
+            url:'/admin/photo/item/'+id+'/del',
+            success: function(result) {
+                if(result.status === 1){
+                    toastr.success(result.info);
+                    setTimeout(function (e) {
+                        window.location.href = '/admin/photo/'+result.id+'/edit';
+                    },1000);
+                }
+
+                if(result.status === 0){
+                    toastr.error(result.info);
+                }
+            },
+            error: function(request) {
+                toastr.error('Connection error');
+            }
+        });
+        return false;
+    });
+
+</script>
+{@include "admin/footer"}

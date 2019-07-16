@@ -1,0 +1,117 @@
+{@include "admin/header"}
+<script src="{@$url}/static/js/Update.js"></script>
+<input type="hidden" id="token" name="token" value="{#token}">
+<div class="container-fluid">
+    <!-- Page Heading -->
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header">
+                <i class="fa fa-fw fa-book"></i>
+                笔记本
+                <small>  </small>
+                <button class="btn btn-primary btn-sm pull-right" data-toggle="modal" data-target=".add-book"> <i class="fa fa-fw fa-edit"></i> 创建笔记 </button>
+            </h3>
+        </div>
+    </div>
+    <!-- /.row -->
+
+    <div class="row">
+        {if $book}
+        {foreach $book(key,value)}
+        <div class="col-sm-2 col-md-2">
+            <div class="thumbnail">
+                <div class="pic">
+                     <img src="{@$qiniu_url}{@value.thumb}" alt="{@value.title}">
+                </div>
+                <div class="caption">
+                    <h4> {@value.title}</h4>
+                    <p class="time"><i class=""></i>{@value.create_at}  <span class="pull-right"> 共 {@value.count} 篇 </span> </p>
+                    <p class="desc">{@value.description}</p>
+                    <p class="Edit-Ber">
+                        <a href="notebook/{@value.id}/edit" class="btn btn-primary btn-block"> <i class="fa fa-fw fa-edit"></i> 编辑 </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+        {/foreach}
+        {else}
+        还没有笔记
+        {/if}
+    </div>
+    <!-- /.row -->
+
+</div>
+
+<!-- people -->
+<div class="modal fade add-book" id="add-book" tabindex="100" role="dialog">
+    <div class="modal-dialog" role="document">
+        <form name="form-book" method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title"> 添加 Book </h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="updateThumb keep">
+                                <img class="img-rounded" src="http://blog/static/images/thumb.png">
+                                <input type="file" id="thumb-file" name="thumb-file">
+                                <input type="hidden" id="thumb" name="thumb">
+                            </div>
+                        </div>
+                        <div class="col-lg-8">
+                            <div class="form-group">
+                                <label> 标题 </label>
+                                <input type="text" class="form-control" name="title" placeholder="Book 名称">
+                            </div>
+                            <div class="form-group">
+                                <label> 任务描述 </label>
+                                <textarea class="form-control" name="description" rows="3" placeholder="Book 描述"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="submit" class="btn btn-primary"> 保存 </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    $(function () {
+
+        $('#thumb').Update();
+
+        $("form[name=form-book]").submit(function(){
+            $.ajax({
+                type: 'POST',
+                data:$(this).serialize(),
+                url: 'notebook/add',
+                success: function(result) {
+                    if(result.status === 1){
+                        toastr.success(result.info);
+                        setTimeout(function (e) {
+                            location.reload();
+                        },1000);
+                    }
+
+                    if(result.status === 0){
+                        toastr.error(result.info);
+                    }
+                },
+                error: function(request) {
+                    toastr.error('Connection error');
+                }
+            });
+            return false;
+        });
+
+    })
+</script>
+
+{@include "admin/footer"}

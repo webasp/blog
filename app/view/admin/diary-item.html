@@ -1,0 +1,44 @@
+{foreach $data(key,value)}
+<blockquote>
+  
+  <footer>                         <?php
+                           switch ($value['type']){
+                                case 1:
+                                    echo '日记';
+                                    break;
+                                case 2:
+                                     echo '周记';
+                                    break;
+                                case 3:
+                                     echo '月度';
+                                    break;
+                                case 4:
+                                     echo '季度';
+                                    break;
+                                case 5:
+                                     echo '年度';
+                                    break;
+                                }
+                        ?>
+                           <cite> <?php echo date('m-d H:i',$value['create_at']);?> </cite>
+                           <span class="diary-edit">
+                        <a href="javascript:diaryStatus({@value.id});">
+                          <?php if($value['status']){ ?>
+                          <span class="fa fa-eye"></span> 公开
+                          <?php }else{ ?>
+                          <span class="fa fa-eye-slash"></span> 自己可见
+                          <?php }?>
+                        </a>
+                        <a href="javascript:diaryDel({@value.id});"><span class="fa fa-times"></span> 删除 </a>
+                           </span>
+                      </footer>
+                      <p>{@value.content}</p>
+                      <?php $img = diaryImg($value['image']);?>
+                      <?php foreach($img as $val){ ?>
+                          <?php echo '<img height="100" src="'.$this->assign['url'].$val.'">' ?>
+                      <?php } ?>
+
+</blockquote>
+ {/foreach}     
+        
+           

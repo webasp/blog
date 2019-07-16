@@ -1,0 +1,214 @@
+{@include "admin/header"}
+
+
+    <title> dengyun Blog Admin </title>
+    <link rel="stylesheet" href="http://www.jsdaima.com/Uploads/webpage/201808/1533260389/css/bootstrap.min.css">
+    <link href="{@$url}/static/admin/css/toastr.min.css" rel="stylesheet">
+    <script src="{@$url}/static/admin/js/jquery-1.11.0.js"></script>
+    <link rel="stylesheet" href="{@$url}/static/admin/css/morris.css">
+    <link rel="stylesheet" href="{@$url}/static/admin/css/fullcalendar.min.css">
+    <link rel="stylesheet" href="{@$url}/static/admin/css/app.css">
+    <script src="{@$url}/static/admin/js/raphael-min.js"></script>
+    <script src="{@$url}/static/admin/js/toastr.min.js"></script>
+    <script src="{@$url}/static/admin/js/morris.min.js"></script>
+
+
+<div id="wrapper">
+<div id="page-wrapper">
+
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-3">
+                            <div id="external-events" class="m-t-20"></div>
+
+                            <!-- checkbox -->
+                            <div class="custom-control custom-checkbox mt-3">
+                                <input type="checkbox" class="custom-control-input" id="drop-remove">
+                                <label class="custom-control-label" for="drop-remove">Remove after drop</label>
+                                <a href="#" class="pull-right btn btn-link btn-xs" style="float: right;" data-toggle="modal" data-target="#add-category">添加</a>
+                            </div>
+                            <div class="pull-right" id="drop-trash">拖拽此删除</div>
+                            <div id="CountHtml" class="CountHtml"></div>
+                        </div>
+
+                        <div class="col-lg-9">
+                            <div id="calendar"></div>
+
+                        </div> <!-- end col -->
+
+                    </div>  <!-- end row -->
+                </div> <!-- end card body-->
+            </div> <!-- end card -->
+
+            <!-- Add New Event MODAL -->
+            <div class="modal fade" id="event-modal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header pr-4 pl-4 border-bottom-0 d-block">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title">Add New Event</h4>
+                        </div>
+                        <div class="modal-body pt-3 pr-4 pl-4">
+                        </div>
+                        <div class="text-right pb-4 pr-4">
+                            <button type="button" class="btn btn-light " data-dismiss="modal">取消</button>
+                            <button type="button" class="btn btn-danger delete-event  " data-dismiss="modal">删除</button>
+                            <button type="button" class="btn btn-success save-event  "> 完成 </button>
+                            <button type="button" class="btn btn-primary complete-event  "> 完成 </button>
+                        </div>
+                    </div> <!-- end modal-content-->
+                </div> <!-- end modal dialog-->
+            </div>
+            <!-- end modal-->
+
+            <!-- Modal Add Category -->
+            <div class="modal fade" id="add-category" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header border-bottom-0 d-block">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title">Add a category</h4>
+                        </div>
+                        <div class="modal-body p-4">
+                            <form>
+                                <div class="form-group">
+                                    <label class="control-label">Category Name</label>
+                                    <input class="form-control form-white" placeholder="Enter name" type="text" name="category-name"/>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Choose Category Color</label>
+                                    <select class="form-control form-white" data-placeholder="Choose a color..." name="category-color">
+                                        <option value="important"> 重要 </option>
+                                        <option value="notice"> 注意 </option>
+                                        <option value="work"> 工作 </option>
+                                        <option value="study"> 学习 </option>
+                                        <option value="hobby"> 爱好 </option>
+                                        <option value="culture"> 修养 </option>
+                                        <option value="fitness"> 健身 </option>
+                                        <option value="daily"> 日常 </option>
+                                        <option value="sleep"> 睡眠 </option>
+                                        <option value="waste"> 无意义 </option>
+                                    </select>
+                                </div>
+
+                            </form>
+
+                            <div class="text-right">
+                                <button type="button" class="btn btn-light " data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary ml-1   save-category" data-dismiss="modal">Save</button>
+                            </div>
+
+                        </div> <!-- end modal-body-->
+                    </div> <!-- end modal-content-->
+                </div> <!-- end modal dialog-->
+            </div>
+            <!-- end modal-->
+        </div>
+        <!-- end col-12 -->
+    </div> <!-- end row -->
+
+</div>
+
+<style>
+    .fc-unthemed .fc-agendaDay-view td.fc-today{
+        background: #fff!important;
+    }
+
+    #drop-trash{
+        width: 100%;
+        height: 100px;
+        line-height: 100px;
+        margin-top: 20px;
+        text-align: center;
+        color: #ccc;
+        background: #f5f5f5;
+        border: 1px solid #efefef;
+    }
+
+    a.bg-danger{
+        background-color: #f1556c!important;
+    }
+    a.bg-success{
+        background-color: #25b343!important;
+    }
+    a.bg-primary{
+        background-color: #00acc1!important;
+    }
+    a.bg-info{
+        background-color: #4b88e4!important;
+    }
+    a.bg-dark{
+        background-color: #323a46!important;
+    }
+    a.bg-warning{
+        background-color: #f7b84b!important;
+    }
+
+    .important{background-color: #f1556c!important;}
+    .notice{background-color: #f7b84b!important;}
+    .work{background-color: #4b88e4!important;}
+    .study{background-color: #00acc1!important;}
+    .hobby{background-color: #fa8c35!important;}
+    .culture{background-color: #336699!important;}
+    .fitness{background-color: #336633!important;}
+    .daily{background-color: #25b343!important;}
+    .sleep{background-color: #75878a!important;}
+    .waste{background-color: #333333!important;}
+
+
+    a.complete{
+        opacity:0.3;!important;
+    }
+    a.complete:hover{
+        opacity:0.4;!important;
+    }
+    .fc-scroller table tbody tr.fc-list-item{
+        background: #ff00001a!important;
+        color: #c34646;
+    }
+
+    .fc-scroller table tbody tr.complete{
+        background: #fff!important;
+        color: #949494;
+    }
+
+    .CountHtml{padding:20px 0;}
+    .CountHtml span{
+        color: #fff;
+        line-height: 30px;
+        margin: 4px;
+        padding: 0 11px;
+        border-radius: 2px;
+        display: inline-block;
+        clear: right;
+    }
+    .CountHtml span i{
+        padding: 0 3px;
+    }
+
+    .CountHtml p{
+        padding: 0;
+        margin: 0;
+    }
+
+</style>
+
+<!-- App js -->
+<script src="{@$url}/static/admin/js/vendor.min.js"></script>
+<script src="{@$url}/static/admin/js/app.min.js"></script>
+
+<!-- plugin js -->
+<script src="{@$url}/static/admin/js/jquery-ui.min.js"></script>
+<script src="{@$url}/static/admin/js/fullcalendar.min.js"></script>
+
+<!-- demo init -->
+<script src="{@$url}/static/admin/js/calendar.init.js"></script>
+
+{@include "admin/footer"}

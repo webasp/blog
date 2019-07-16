@@ -1,0 +1,290 @@
+{@include "admin/header"}
+<script src="{@$url}/static/js/Update.js"></script>
+<input type="hidden" id="token" name="token" value="{#token}">
+<div class="container-fluid">
+    <!-- Page Heading -->
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header bookTitle">
+                <i class="fa fa-file-text"></i>
+                {$book.title}
+                <button class="btn btn-primary btn-sm pull-right" data-toggle="modal" data-target=".book-item"> <i class="fa fa-pencil fa-fw"></i> 添加文章 </button>
+            </h3>
+        </div>
+    </div>
+    <!-- /.row -->
+
+    <div class="row">
+        <div class="col-lg-2 bookList">
+            <ul>
+                <li class="active"><a href="/admin/notebook/{$book.id}/edit"> <i class="fa fa-file-o"></i> 封面 </a></li>
+                {if $item}
+                {foreach $item(key,value)}
+                <li><a href="/admin/notebook/{$book.id}/edit/{@value.id}"> {@value.title} </a>
+                    <span class="pull-right oper" data-toggle="modal" data-id="{@value.id}" data-title="{@value.title}" data-sort="{@value.sort}" data-target="#book-item-update"><i class="fa fa-pencil fa-fw"></i></span> </li>
+                {/foreach}
+                {else}
+                <li><a>还没有文章 </a></li>
+                {/if}
+
+            </ul>
+        </div>
+        <div class="col-lg-10 bookEdit">
+            <form name="book-cover" method="post">
+                <div class="row" style="margin: 20px 5px;">
+                    <div class="col-lg-5">
+                        <div class="form-group">
+                            <div class="updateThumb">
+                                <img  class="img-rounded" src="{@$qiniu_url}{$book.thumb}">
+                                <input type="file" id="thumb-file" name="thumb-file">
+                                <input type="hidden" id="thumb" name="thumb" value="{$book.thumb}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input class="form-control" name="title" placeholder="笔记标题" value="{$book.title}">
+                        </div>
+                        <div class="form-group">
+                            <label> 出版 </label>
+                            <input type="text" class="form-control" name="publish" value="{$book.publish}"  placeholder="0">
+                        </div>
+                        <div class="form-group">
+                            <textarea class="form-control" name="description" rows="5" placeholder="简要描述">{$book.description}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-block btn-primary"> 保存 </button>
+                            <span data-id="{$book.id}" id="bookDel" class="btn btn-block btn-danger"> <i class="fa fa-trash-o fa-lg"></i> 删除 </span>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- /.row -->
+</div>
+<!-- 创建标题 -->
+<div class="modal fade book-item" id="book-item" tabindex="100" role="dialog">
+    <div class="modal-dialog modal-sm" role="document">
+        <form name="form-book-item" method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title"> 创建标题 </h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label> 标题 </label>
+                                <input type="text" class="form-control" name="title" placeholder="标题">
+                            </div>
+                            <div class="form-group">
+                                <label> 排序 </label>
+                                <input type="text" class="form-control" name="sort" placeholder="0">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-block btn-primary"> 保存 </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="modal fade book-item-update" id="book-item-update" tabindex="100" role="dialog">
+    <div class="modal-dialog modal-sm" role="document">
+        <form name="book-item-update" method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title"> 编辑标题 </h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label> 标题 </label>
+                                <input type="text" class="form-control" name="title" placeholder="标题">
+                                <input type="hidden" class="form-control" name="id" value="">
+                            </div>
+                            <div class="form-group">
+                                <label> 排序 </label>
+                                <input type="text" class="form-control" name="sort" placeholder="0">
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <span class="btn btn-default" data-dismiss="modal"> 关闭 </span>
+                    <span id="del" data-id="" class="btn btn-danger"> 删除 </span>
+                    <button type="submit" class="btn btn-primary"> 保存 </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    var left = 113;
+    $(function (e) {
+
+        $('#thumb').Update();
+
+        $(".bookList ul li").hover(function(){
+            $(this).find('span').show();
+        },function(){
+            $(this).find('span').hide();
+        });
+        // 创建标题
+        $("form[name=form-book-item]").submit(function(){
+            $.ajax({
+                url:'/admin/notebook/{$book.id}/edit/create',
+                type: "POST",
+                data:$(this).serialize(),
+                success: function(result) {
+                    if(result.status === 1){
+                        toastr.success(result.info);
+                        setTimeout(function (e) {
+                            location.reload();
+                        },1000);
+                    }
+
+                    if(result.status === 0){
+                        toastr.error(result.info);
+                    }
+                },
+                error: function(request) {
+                    toastr.error('Connection error');
+                }
+            });
+            return false;
+        });
+        // 编辑Book
+        $("form[name=book-cover]").submit(function(){
+            $.ajax({
+                url:'edit',
+                type: "POST",
+                data:$(this).serialize(),
+                success: function(result) {
+                    if(result.status === 1){
+                        toastr.success(result.info);
+                        setTimeout(function (e) {
+                            location.reload();
+                        },1000);
+                    }
+
+                    if(result.status === 0){
+                        toastr.error(result.info);
+                    }
+                },
+                error: function(request) {
+                    toastr.error('Connection error');
+                }
+            });
+            return false;
+        });
+        // 删除Book
+        $("span#bookDel").click(function(){
+            var id = $(this).data('id');
+            if(!confirm("确认删除吗？")){
+                return false;
+            }
+            if(!confirm("继续，会删除该笔记下所有内容\n\t请谨慎操作！")){
+                return false;
+            }
+            $.ajax({
+                url:'/admin/notebook/{$book.id}/del',
+                type: "get",
+                data:$(this).serialize(),
+                success: function(result) {
+                    if(result.status === 1){
+                        toastr.success(result.info);
+                        setTimeout(function (e) {
+                            window.location.href = '/admin/notebook';
+                        },1000);
+                    }
+
+                    if(result.status === 0){
+                        toastr.error(result.info);
+                    }
+                },
+                error: function(request) {
+                    toastr.error('Connection error');
+                }
+            });
+        });
+        // 弹出修改标题窗口
+        $('#book-item-update').on('show.bs.modal', function (event) {
+            var obj = $(event.relatedTarget);
+            var id = obj.data('id');
+            var title = obj.data('title');
+            var sort = obj.data('sort');
+            var modal = $(this);
+            modal.find('input[name=id]').val(id);
+            modal.find('input[name=title]').val(title);
+            modal.find('input[name=sort]').val(sort);
+            modal.find('#del').attr('data-id',id);
+        })
+        // 删除笔记
+        $("span#del").click(function(){
+            var id = $(this).data('id');
+            if(!confirm("确认删除吗?")){
+                return false;
+            }
+            if(!confirm("删除后不可恢复，请谨慎操作！")){
+                return false;
+            }
+            $.ajax({
+                url:'/admin/notebook/{$book.id}/edit/'+id+'/del',
+                type: "GET",
+                success: function(result) {
+                    if(result.status === 1){
+                        toastr.success(result.info);
+                        setTimeout(function (e) {
+                            location.reload();
+                        },1000);
+                    }
+
+                    if(result.status === 0){
+                        toastr.error(result.info);
+                    }
+                },
+                error: function(request) {
+                    toastr.error('Connection error');
+                }
+            });
+        });
+        // 编辑笔记
+        $("form[name=book-item-update]").submit(function(){
+            var id = $('input[name=id]').val();
+            $.ajax({
+                url:'/admin/notebook/{$book.id}/edit/'+id+'/update',
+                type: "POST",
+                data:$(this).serialize(),
+                success: function(result) {
+                    if(result.status === 1){
+                        toastr.success(result.info);
+                        setTimeout(function (e) {
+                            location.reload();
+                        },1000);
+                    }
+
+                    if(result.status === 0){
+                        toastr.error(result.info);
+                    }
+                },
+                error: function(request) {
+                    toastr.error('Connection error');
+                }
+            });
+            return false;
+        });
+
+    });
+
+</script>
+{@include "admin/footer"}

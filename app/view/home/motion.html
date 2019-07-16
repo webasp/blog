@@ -1,0 +1,78 @@
+{@include "home/header"}
+<link rel="stylesheet" href="{@$url}/static/css/motion.css">
+<article class="main-content page-page">
+    <div class="motion-box clear">
+        <h2> 运动记录 <span>{#str}</span><a class="fr" id="times"> 往期 </a></h2>
+        <div class="choiceShow">
+            <p class="num clear"> <span class="fl"> 目标{$keep.aim} Km ~ 已跑{$keep.sum} Km</span> <span class="fr"> 剩余{$keep.left} Km </span> </p>
+            <ul class="clear" id="today-tab">
+                {foreach $data(key,value)}
+                    <li class="<?php if($value['today'] == $value['day']) echo 'active';?>">
+                        <p>{@value.week}</p>
+                        <span>
+                            <?php if(!empty($value['data'])) { ?>
+                            <i class="tip"></i>
+                            <?php } ?>
+                            {@value.day}
+                        </span>
+                    </li>
+                {/foreach}
+            </ul>
+        </div>
+        <div class="motion-list" id="motion">
+            <?php foreach ($this->assign['data'] as $key=>$value) { ?>
+            <div class="today <?php if($value['today'] == $value['day']) echo 'active';?>">
+                <?php if(!empty($value['data'])){ ?>
+                    <?php foreach($value['data'] as $val) {?>
+                    <dl>
+                        <dt class="fl">
+                            <i class="fl"><img src="{@$url}/static/images/<?php echo $val['type'];?>.png" alt=""></i>
+                            <span class="fl"> <?php echo $this->assign['motion'][$val['type']][0];?> </span>
+                        </dt>
+                        <dd class="info">
+                            <i><?php echo $val['number'];?><?php echo $this->assign['motion'][$val['type']][1];?></i>
+                            <span class="fr"> <?php echo date('H:i',strtotime($val['keeptime']));?> </span>
+                        </dd>
+                        <?php if($val['thumb']) { ?>
+                        <dd class="record clear">
+                            <img src="{@$qiniu_url}<?php echo $val['thumb'];?>" alt="<?php echo $this->assign['motion'][$val['type']][1];?>">
+                        </dd>
+                        <?php } ?>
+
+                    </dl>
+                    <?php } ?>
+                <?php }else{ ?>
+                   <div class="motion-empty">
+                       『  {@value.week}  』
+                   </div>
+                <?php } ?>
+            </div>
+            <?php } ?>
+        </div>
+
+    </div>
+</article>
+<script>
+    $(function(){
+        $("#today-tab li").on("click",function(){
+            var index=$(this).index();
+            $(this).parent().parent().next().find('.today').removeClass("active").eq(index).addClass("active");
+            $(this).addClass("active").siblings().removeClass("active");
+        });
+
+        <?php if(!$this->assign['active']){ ?>
+            $("#today-tab li:first-child").addClass("active").siblings().removeClass("active");
+            $(".today:first-child").addClass("active").siblings().removeClass("active");
+        <?php } ?>
+
+
+
+
+
+        $('#times').click(function () {
+            layer.open({content: '{#totalweek}'});
+        });
+
+    })
+</script>
+{@include "home/footer"}

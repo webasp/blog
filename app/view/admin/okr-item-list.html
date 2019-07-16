@@ -1,0 +1,14 @@
+{if $item}
+    {foreach $item(key,value)}
+         <p data-id="{@value.id}" data-normal_score="{@value.normal_score}" data-normal_details="{@value.normal_details}" data-backward_score="{@value.backward_score}" data-backward_details="{@value.backward_details}" data-complete_score="{@value.complete_score}" data-complete_details="{@value.complete_details}" data-content="{@value.content}"> {@value.content}
+             <span class="operate">
+                 <span data-toggle="edit-okr-item" data-content="{@value.content}" data-id="{@value.id}" ><i class="fa fa-pencil fa-fw"></i></span>
+                 <span data-toggle="okr-item-del" data-id="{@value.id}" ><i class="fa fa-trash-o"></i></span>
+             </span>
+
+
+         </p>
+    {/foreach}
+{else}
+    <p class=""> 还没有任务.. </p>
+{/if}

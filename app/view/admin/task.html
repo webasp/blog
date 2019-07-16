@@ -1,0 +1,231 @@
+{@include "admin/header"}
+<div class="container-fluid">
+    <!-- Page Heading -->
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header">
+                <i class="fa fa-fw fa-tasks"></i> 任务清单 <small>  </small>
+            </h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="panel panel-default panel-task">
+                        <!-- Default panel contents -->
+                        <div class="panel-heading text-center">
+                            <div class="pull-left"><i class="fa fa-tasks fa-fw"></i> <b> 今天任务 </b></div>
+                            <div class="btn-group btn-group-xs" id="week" role="group">
+                                <button type="button" data-today="<?php echo date('Y-m-d',strtotime( '+'. 1-date('w').' days' ));?>" class="btn <?php echo date('w')==1 ? 'btn-primary':'btn-default';?> ">周一</button>
+                                <button type="button" data-today="<?php echo date('Y-m-d',strtotime( '+'. 2-date('w').' days' ));?>" class="btn <?php echo date('w')==2 ? 'btn-primary':'btn-default';?>">周二</button>
+                                <button type="button" data-today="<?php echo date('Y-m-d',strtotime( '+'. 3-date('w').' days' ));?>" class="btn <?php echo date('w')==3 ? 'btn-primary':'btn-default';?>">周三</button>
+                                <button type="button" data-today="<?php echo date('Y-m-d',strtotime( '+'. 4-date('w').' days' ));?>" class="btn <?php echo date('w')==4 ? 'btn-primary':'btn-default';?>">周四</button>
+                                <button type="button" data-today="<?php echo date('Y-m-d',strtotime( '+'. 5-date('w').' days' ));?>" class="btn <?php echo date('w')==5 ? 'btn-primary':'btn-default';?>">周五</button>
+                                <button type="button" data-today="<?php echo date('Y-m-d',strtotime( '+'. 6-date('w').' days' ));?>" class="btn <?php echo date('w')==6 ? 'btn-primary':'btn-default';?>">周六</button>
+                                <button type="button" data-today="<?php echo date('Y-m-d',strtotime( '+'. 7-date('w').' days' ));?>" class="btn <?php echo date('w')==0 ? 'btn-primary':'btn-default';?>">周日</button>
+                            </div>
+                            <span class="pull-right btn btn-xs" data-toggle="modal" data-target=".add-task"><i class="fa fa-plus"></i></span>
+                        </div>
+                        <div id="today-task"></div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="panel panel-default panel-task">
+                        <div class="panel-heading">
+                            <h3 class="panel-title text-center">
+                                <span class="pull-left">
+                                    <i class="fa fa-tasks fa-fw"></i> OKR
+                                </span>
+                                <div class="btn-group btn-group-xs" id="okr-type" role="group">
+                                    <button type="button" data-type="1" class="btn btn-primary">近期目标</button>
+                                    <button type="button" data-type="2" class="btn btn-default">今年目标</button>
+                                    <button type="button" data-type="3" class="btn btn-default">长期目标</button>
+                                </div>
+                                <span class="pull-right btn btn-xs" data-toggle="modal" data-target=".add-okr"><i class="fa fa-plus"></i></span></h3>
+                        </div>
+                        <div id="okr-list"></div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="panel panel-default panel-task">
+                        <div class="panel-heading">
+                            <h3 class="panel-title"><i class="fa fa-fw fa-edit"></i> 日志 </h3>
+                        </div>
+                        <div class="panel-body">
+                            <form name="diary" method="post">
+
+                            <div class="form-group">
+                                <textarea id="diary-content" class="form-control" name="content" rows="12">{$diaty.content}</textarea>
+                            </div>
+                            <div class="form-group">
+                                <div class="diary-type pull-left">
+                                    <input type="hidden" name="id" value="{$diaty.id}">
+                                    <label class="active"> <input type="radio" value="1" name="type" checked> <span class="btn btn-sm btn-default"> 日记 </span> </label>
+                                    <label> <input type="radio" value="2" name="type"> <span class="btn btn-sm btn-default"> 周记 </span> </label>
+                                    <label> <input type="radio" value="3" name="type"> <span class="btn btn-sm btn-default"> 月记 </span> </label>
+                                    <label> <input type="radio" value="4" name="type"> <span class="btn btn-sm btn-default"> 季度 </span> </label>
+                                    <label> <input type="radio" value="5" name="type"> <span class="btn btn-sm btn-default"> 年度 </span> </label>
+                                </div>
+                                <button class="btn btn-sm btn-primary pull-right diary-button"> 保存 </button>
+                            </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header">
+                <i class="fa fa-fw fa-tasks"></i> 项目清单 <small> 先完成后优化 </small>
+                <span class="btn btn-primary btn-sm pull-right" data-toggle="modal" data-target=".add-project-task"> <i class="fa fa-plus"></i> 添加项目 </span>
+            </h3>
+        </div>
+        <div id="project-task-lsit">
+            {if $project}
+                {foreach $project(key,value)}
+                <div class="col-lg-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading"> <b> {@value.title} </b>
+                            <span class="pull-right btn btn-xs" data-id="{@value.id}" data-toggle="edit-project-task"><i class="fa fa-square"></i></span>
+                        </div>
+                        <div class="panel-body">
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" aria-valuenow="{@value.progress}" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em; width:{@value.progress}%;">
+                                    {@value.progress}%
+                                </div>
+                            </div>
+                        </div>
+                        <ul class="list-group">
+                            <?php foreach($value['item'] as $val){ ?>
+                            <li class="list-group-item"> <?php echo $val['title'];?> </li>
+                            <?php } ?>
+                        </ul>
+                        <div class="panel-body">
+                            <div class="text-right">
+                                <a href="task/<?php echo $value['id'];?>"> 查看详情 <i class="fa fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {/foreach}
+            {else}
+            <p class=""> 还没有任务.. </p>
+            {/if}
+        </div>
+    </div>
+</div>
+<!-- 添加计划 -->
+<div class="modal fade add-okr" id="add-okr" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title"> 添加计划 </h4>
+            </div>
+            <form name="okr-add" method="post">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <input type="text" class="form-control" name="title" placeholder="计划标题" required="required">
+                    </div>
+                    <div class="form-group">
+                        <select class="form-control" name="type">
+                            <option value="1">近期目标</option>
+                            <option value="2">今年目标</option>
+                            <option value="3">长期目标</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <input type="date" class="form-control start_at" value="<?php echo date('Y-m-d');?>" name="start_at" required="required">
+                    </div>
+                    <div class="form-group">
+                        <input type="date" class="form-control end_at" value="<?php echo date('Y-m-d');?>" name="end_at" required="required">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">关闭</button>
+                    <button type="submit" class="btn btn-sm btn-primary"> 保存 </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- 添加今日任务 -->
+<div class="modal fade add-task" id="add-task" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title"> 添加任务 </h4>
+            </div>
+            <form name="task-add" method="post">
+            <div class="modal-body">
+                    <div class="form-group">
+                        <input type="text" class="form-control" name="title" placeholder="任务标题" required="required">
+                    </div>
+                    <div class="form-group">
+                        <select class="form-control" name="level">
+                            <option value="1">一般</option>
+                            <option value="2">重要</option>
+                            <option value="3">紧急</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <input type="datetime-local" class="form-control start_at" value="<?php echo date('Y-m-d\TH:00');?>" name="start_at" required="required">
+                    </div>
+                    <div class="form-group">
+                        <input type="datetime-local" class="form-control end_at" value="<?php echo date('Y-m-d\TH:00');?>" name="end_at" required="required">
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">关闭</button>
+                <button type="submit" class="btn btn-sm btn-primary"> 保存 </button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- 添加项目任务 -->
+<div class="modal fade add-project-task" id="add-project-task" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-sm" role="document">
+        <form name="project-task" method="post">
+           <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title"> 添加项目任务 </h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <input type="text" class="form-control" name="title" required="required" placeholder="任务标题">
+                </div>
+                <div class="form-group">
+                    <select class="form-control" name="level">
+                        <option value="1">一般</option>
+                        <option value="2">重要</option>
+                        <option value="3">紧急</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <input type="datetime-local" value="<?php echo date('Y-m-d\TH:00');?>" class="form-control start_at" name="start_at">
+                </div>
+                <div class="form-group">
+                    <input type="datetime-local" value="<?php echo date('Y-m-d\TH:00');?>" class="form-control end_at" name="end_at">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="submit" class="btn btn-primary"> 保存 </button>
+            </div>
+        </div>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript" src="{@$url}/static/admin/js/task.js" charset="UTF-8"></script>
+<script>
+    getTodayTask();
+    getOkrTask();
+</script>
+{@include "admin/footer"}

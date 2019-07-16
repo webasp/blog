@@ -1,0 +1,212 @@
+{@include "admin/header"}
+<script src="{@$url}/static/admin/js/Update3.js"></script>
+<input type="hidden" id="token" name="token" value="{#token}">
+
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <div class="row">
+            <div class="col-lg-12">
+            <h3 class="page-header"> <i class="fa fa-fw fa-edit"></i> 日志管理 </h3>
+        </div>
+    </div>
+    <div class="row">
+    	<div class="col-lg-6">
+	    		<div class="jumbotron">
+	                    <form name="diary" method="post">
+	                    <div class="form-group">
+	                        <textarea id="diary-content" class="form-control" name="content" rows="5"></textarea>
+	                    </div>
+	                    <div class="form-group">
+	                        <div class="diary-type pull-left">
+	                            <label class="active"> <input type="radio" value="1" name="type" checked> <span class="btn btn btn-default"> 日记 </span> </label>
+	                            <label> <input type="radio" value="2" name="type"> <span class="btn btn btn-default"> 周记 </span> </label>
+	                            <label> <input type="radio" value="3" name="type"> <span class="btn btn btn-default"> 月记 </span> </label>
+	                            <label> <input type="radio" value="4" name="type"> <span class="btn btn btn-default"> 季度 </span> </label>
+	                            <label> <input type="radio" value="5" name="type"> <span class="btn btn btn-default"> 年度 </span> </label>
+	                        </div>
+	                         <input type="hidden" name="image" value="">
+	                        <button class="btn btn btn-primary pull-right diary-button"> 保存 </button>
+	                    </div>
+
+
+	                    </form>
+	        <div class="clearfix"></div>
+	        <div class="diary-img clearfix">
+	        	<div class="diary-img-list clearfix" id="diary-img-list"></div>
+	        	  <div class="updateThumb clearfix pull-left">
+                    <img  class="img-rounded" src="http://temp.im/80x100/a0a0a0/fff">
+                    <input type="file" id="thumb-file" name="thumb-file">
+                </div>
+	        </div>
+
+        </div>
+
+
+        	<div class="diary-tab">
+				<ul class="nav nav-tabs nav-justified">
+				  <li role="presentation" class="active"><a href="javascript:getDiaryList(1);">日记</a></li>
+				  <li role="presentation"><a href="javascript:getDiaryList(2);">周记</a></li>
+				  <li role="presentation"><a href="javascript:getDiaryList(3);">月记</a></li>
+				  <li role="presentation"><a href="javascript:getDiaryList(4);">季度</a></li>
+				  <li role="presentation"><a href="javascript:getDiaryList(5);">年度</a></li>
+				</ul>	
+	        </div>
+
+            <div class="diary-list" id="diary-list"></div>
+
+
+
+
+
+
+    	</div>
+    	<div class="col-lg-6">
+    		全年的日历
+    	</div>
+    </div>
+
+</div>
+
+<style>
+.jumbotron{padding-bottom: 0px;}
+.diary-img{border-top: #d4d4d4 solid 1px;margin-top: 20px; padding:20px 0;}
+.diary-img .diary-img-list{float:left;}
+.diary-img .diary-img-list span{    float: left;
+    margin-right: 5px;
+    border-radius: 11px;
+    display: inline-block;}
+.diary-img .diary-img-list span img{width: 80px;height: 100px;}
+.diary-img .updateThumb{
+    width: 80px;
+    display: block;
+    height: 100px;
+    cursor: pointer;
+    position: relative;
+}
+.diary-img .updateThumb img{   
+	left: 40px;
+	top: 50px;
+	width: 100%;
+	height: 100%;
+}
+.diary-img .pu-img:hover{
+	background: #fff;
+}
+.diary-img .pu-img span{}
+.diary-edit{ padding:0 30px; }
+.diary-edit a{ padding:0 3px;}
+</style>
+
+<script type="text/javascript" src="{@$url}/static/admin/js/task.js" charset="UTF-8"></script>
+
+<script>
+
+    $('#thumb').Update();
+
+    function callback_url(domain,url){
+    	var html = '<span><img src="'+domain+url+'" alt=""></span>';
+    	$("#diary-img-list").append(html);
+    	var strimage = $("input[name=image]").val();
+    	if(strimage){
+             $("input[name=image]").val(strimage+','+url);
+    	}else{
+    		$("input[name=image]").val(url);
+    	}
+
+    }
+
+
+
+
+    // 写日记
+$('form[name=diary]').submit(function () {
+    if($("#diary-content").val() == ''){
+        $("#diary-content").focus();
+        toastr.warning('日记内容不能为空！');
+        return false;
+    }
+
+    $.ajax({
+        url:'/admin/diary/save',
+        type: "POST",
+        data:$(this).serialize(),
+        success: function(result) {
+            
+            toastr.success(result.info);
+            $("#diary-content").val('');
+            $("#diary-img-list").html('');
+            $("input[name=image]").val('');
+            getDiaryList(1);
+        },
+        error: function(request) {
+            alert("Connection error");
+        }
+    });
+    return false;
+});
+
+
+function getDiaryList(type=1){
+    $.ajax({
+        url:'/admin/diary/list?type='+type,
+        type: "GET",
+        success: function(result) {
+            $("#diary-list").html(result);
+        },
+        error: function(request) {
+            alert("Connection error");
+        }
+    });
+    return false;
+}
+
+getDiaryList(1);
+
+
+
+function diaryStatus(id)
+{
+
+ if(!confirm("确定要设置吗？")){
+        return false;
+    }
+    $.ajax({
+        url:'/admin/diary/'+id+'/update',
+        type: "GET",
+        success: function(result) {
+            toastr.success(result.info);
+            getDiaryList(1);
+        },
+        error: function(request) {
+            alert("Connection error");
+        }
+    });
+    return false;
+}
+ 
+
+ function diaryDel(id)
+{
+ if(!confirm("确认删除吗？")){
+        return false;
+    }
+
+        $.ajax({
+        url:'/admin/diary/'+id+'/del',
+        type: "GET",
+        success: function(result) {
+            toastr.success(result.info);
+            getDiaryList(1);
+        },
+        error: function(request) {
+            alert("Connection error");
+        }
+    });
+    return false;
+}  
+</script>
+
+
+
+{@include "admin/footer"}

@@ -1,0 +1,78 @@
+{@include "admin/header"}
+<div class="container-fluid">
+    <!-- Page Heading -->
+    <div class="row">
+        <div class="col-lg-12">
+            <h4 class="page-header" style="line-height: 40px;">
+                <i class="fa fa-fw fa-tasks"></i> {$data.title}
+                <span class=""> <button class="btn btn-primary pull-right" data-toggle="modal" data-target=".add-project-task"> 创建项目任务 </button> </span>
+            </h4>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="project-task-list" id="project-task-list" style="min-height: 600px;"></div>
+        </div>
+        <div class="col-lg-4">
+            <form name="add-project-replay" method="post">
+                <input type="hidden" name="fid" value="{#pid}">
+                <textarea class="form-control" name="content" rows="3" required="required"></textarea>
+                <p class="project-task-replay-ber">
+                    <select class="project-task-replay-select" name="pid">
+                        {foreach $item(key,value)}
+                            <option value="{@value.id}">{@value.title} </option>
+                        {/foreach}
+                    </select>
+                    <button type="submit" class="btn btn-primary pull-right"> 保存 </button>
+                </p>
+            </form>
+            <div class="project-task-replay" id="project-task-replay"></div>
+        </div>
+
+    </div>
+</div>
+
+<!-- 添加今日任务 -->
+<div class="modal fade add-project-task" id="add-project-item" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title"> 添加任务 </h4>
+            </div>
+            <form name="add-project-item" method="post">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <input type="hidden" name="pid" value="{#pid}">
+                        <input type="text" class="form-control" name="title" placeholder="任务标题" required="required">
+                    </div>
+                    <div class="form-group">
+                        <input type="datetime-local" class="form-control start_at" value="<?php echo date('Y-m-d\TH:00');?>" name="start_at" required="required">
+                    </div>
+                    <div class="form-group">
+                        <input type="datetime-local" class="form-control end_at" value="<?php echo date('Y-m-d\TH:00');?>" name="end_at" required="required">
+                    </div>
+                    <div class="form-group">
+                        <textarea name="content" class="form-control" placeholder="项目任务描述" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">关闭</button>
+                    <button type="submit" class="btn btn-sm btn-primary"> 保存 </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="{@$url}/static/admin/js/task.js" charset="UTF-8"></script>
+<script>
+    $('.project-task-replay-select').change(function(){
+        var pid = $(this).children('option:selected').val();
+        getprojectItemReplay('{#pid}',pid);
+    })
+    getProjectTaskList('{#pid}');
+    getprojectItemReplay('{#pid}');
+</script>
+{@include "admin/footer"}

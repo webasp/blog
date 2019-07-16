@@ -1,0 +1,105 @@
+{@include "admin/header"}
+<link rel="stylesheet" href="{@$url}/static/admin/css/morris.css">
+<div class="container-fluid">
+    <!-- Page Heading -->
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header">
+                <i class="fa fa-fw fa-dashboard"></i> 到深圳的日子里
+            </h3>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <table class="table">
+                <?php $i = 1;?>
+                {foreach $data(key,value)}
+                    <tr class="success">
+                        <th width="65">{@@key}年</th>
+                        <th colspan="2">  </th>
+                    </tr>
+                    {foreach @value(key,value)}
+                        <tr>
+                            <th scope="row"> </th>
+                            <td width="50">{@@value}月</td>
+                            <td>
+                                <i class="add-shenzhan glyphicon glyphicon-plus" data-date="{@@key}" data-toggle="add-shenzhen"></i>
+                                <?php
+                                if(isset($this->assign['diaty'][$key])){
+                                   $diatyDate = $this->assign['diaty'][$key];
+                                   foreach($diatyDate as $val){
+                                      echo ' <a class="" title="'.$val['content'].'">'.$val['title'].'</a> |';
+                                   }
+                                }
+                                ?>
+                            </td>
+                        </tr>
+                    <?php if($key == '2018-06') {?>
+                    <tr class="danger"><td align="center" colspan="100"> 浪费了的时间，无法挽回,就然她过去，请对你的将来负责！ </td></tr>
+                    <?php } ?>
+                    {/foreach}
+
+                {/foreach}
+
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="add-shenzhen" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <form name="form-shenzhen-post" method="post">
+                <div class="modal-body">
+                    <p><input type="text" name="title" class="form-control" placeholder="标题" required="required"></p>
+                    <p><textarea class="form-control" name="content" rows="3" required="required" placeholder="描述"></textarea></p>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" name="create_at" value="">
+                    <button type="button" class="btn btn-default" data-dismiss="modal"> 取消 </button>
+                    <button type="submit" class="btn btn-primary"> 保存 </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $(document).on('click','i[data-toggle=add-shenzhen]',function(){
+        var date = $(this).data('date');
+        var modal = $('#add-shenzhen');
+        modal.modal('show');
+        modal.find('input[name=create_at]').val(date)
+    });
+
+    $('form[name=form-shenzhen-post]').submit(function () {
+        $.ajax({
+            url:'/admin/shenzhen/save',
+            type: "POST",
+            data:$(this).serialize(),
+            success: function(result) {
+                if(result.status === 1){
+                    toastr.success(result.info,function () {
+                        $("#add-motion").modal('hide');
+                        setTimeout(function (e) {
+                            location.replace(location.href);
+                        },1000);
+                    });
+                }
+
+                if(result.status === 0){
+                    toastr.error(result.info);
+                }
+            },
+            error: function(request) {
+                toastr.error('Connection error');
+            }
+        });
+        return false;
+    });
+</script>
+
+{@include "admin/footer"}

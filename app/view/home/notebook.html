@@ -1,0 +1,25 @@
+{@include "home/header"}
+<link rel="stylesheet" href="{@$url}/static/css/motion.css">
+<article class="main-content index-page">
+    <div class="notebook-page">
+        <div class="notebook-list">
+            {if $book}
+                {foreach $book(key,value)}
+                    <dl class="notebook-item">
+                        <dt><img src="{@$qiniu_url}{@value.thumb}" alt="{@value.title}"></dt>
+                        <dd class="title"><a href="/notebook/{@value.id}">{@value.title}</a> </dd>
+                        <dd class="info"> <span> 发布于 <?php echo date('Y-m-d H:i',strtotime($value['create_at']));?></span> <span> 共 ({@value.count}) 页 </span></dd>
+                        <dd class="desc">{@value.description}</dd>
+                    </dl>
+                {/foreach}
+            {else}
+            <div class='empty'> 还没有笔记 </div>
+            {/if}
+            <div class="lists-navigator clearfix">
+                {#page}
+            </div>
+        </div>
+    </div>
+</article>
+
+{@include "home/footer"}

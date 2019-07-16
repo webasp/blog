@@ -1,0 +1,10 @@
+{if $data}
+    {foreach $data(key,value)}
+        <dl>
+            <dt> <?php echo date('Y-m-d H:i',$value['create_at']);?> <span data-toggle="project-replay-del" class="edit-project-task" data-id="{@value.id}"><i class="fa fa-trash-o"></i></span></dt>
+            <dd class="content"> {@value.content} </dd>
+        </dl>
+    {/foreach}
+{else}
+    <p class=""> 还没有添加备注.. </p>
+{/if}
