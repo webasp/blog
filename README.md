@@ -15,6 +15,6 @@
 
 # 图片演示
 博客首页
-![博客首页](http://ouz7z86vp.bkt.clouddn.com/1563344860173.jpg)
+![博客首页](http://img.dengyun.me/1563344860173.jpg)
 日程表
-![博客首页](http://ouz7z86vp.bkt.clouddn.com/1563345834545.jpg)
+![博客首页](http://img.dengyun.me/1563345834545.jpg)
