@@ -1,8 +1,6 @@
-# blog
+# 个人博客
 
-使用 MVC PHP 框架
-
-![](http://ouz7z86vp.bkt.clouddn.com/1563344860173.jpg)
+使用 之前写的 MVC PHP 框架编写而成,简练小巧，赏心悦目的路由
 
 # 博客功能
 
@@ -14,3 +12,9 @@
 2. 使用简练的 URL 
 3. 使用七牛云存储图片 图片上传自动压缩
 4. 拖拽式日程表管理
+
+# 图片演示
+博客首页
+![博客首页](http://ouz7z86vp.bkt.clouddn.com/1563344860173.jpg)
+日程表
+![博客首页](http://ouz7z86vp.bkt.clouddn.com/1563345834545.jpg)
